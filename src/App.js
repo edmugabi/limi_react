@@ -64,6 +64,9 @@ class App extends Component {
     this.onNavTermClick = this.onNavTermClick.bind(this);
     this.updateName = this.updateName.bind(this);
     this.updateDesc = this.updateDesc.bind(this);
+    this.onSave = this.onSave.bind(this);
+    this.onNew = this.onNew.bind(this);
+    this.onDelete = this.onDelete.bind(this);
   }
 
 
@@ -78,10 +81,12 @@ class App extends Component {
       <div className="container">
         <div className="row">
         <div className="col-md-4 col-sm-4">
-          <NavList terms={terms} activeIndex={this.state.activeIndex} onNavTermClick={this.onNavTermClick} />
+          <NavList terms={terms} activeIndex={this.state.activeIndex} onNavTermClick={this.onNavTermClick}
+          onNew={this.onNew} onDelete={this.onDelete}/>
         </div>
         <div className="col-md-6 col-sm-6">
           <TermDisplay terms={terms} activeTerm={activeTerm}
+              onSave={this.onSave}
               updateName={this.updateName} updateDesc={this.updateDesc}
               nameText={this.state.nameText} descText={this.state.descText} />
         </div>
@@ -91,7 +96,53 @@ class App extends Component {
     );
   }
 
+  onDelete(i) {
+    let terms = this.state.terms;
+    console.log("deleting index", i);
+    terms.splice(i, 1);
+    this.setState({
+      terms: terms
+    })
+  }
+
+  onNew() {
+    this.onSave();
+    const activeIndex = this.state.terms.length;
+    console.log("New Active Index", activeIndex);
+    this.setState({
+      activeIndex: activeIndex,
+      nameText: '',
+      descText: ''
+    });
+  }
+
+  onSave() {
+    let terms = this.state.terms;
+    const activeIndex = this.state.activeIndex;
+    const name = this.state.nameText;
+    const desc = this.state.descText;
+
+    console.log(terms[activeIndex]);
+    if (terms[activeIndex] === undefined) {
+      terms[activeIndex] = {
+        id: "07b1a4ad-9f5a-46c3-890c-0854b9456e98",
+        name: name,
+        description: desc,
+        expr: [],
+        value: ''
+      };
+    }
+    else {
+      terms[activeIndex].name = name;
+      terms[activeIndex].description = desc;
+    }
+    this.setState({
+      terms: terms
+    });
+  }
+
   onNavTermClick(n) {
+    this.onSave()
     const terms = this.state.terms;
 
     this.setState({

@@ -39,7 +39,8 @@ class TermDisplay extends Component {
        <ExprList terms={terms}/>
        <h5>Value:</h5>
        <div>3</div>
-       <button type="button" className="btn btn-default pull-right">Save</button>
+       <button type="button" className="btn btn-default pull-right"
+         onClick={this.props.onSave} >Save</button>
      </div>
    );
  }

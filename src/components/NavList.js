@@ -21,12 +21,17 @@ export default class NavList extends Component {
         {
           terms.map((term, index) => {
             if (index === activeIndex )  {
-              return (<li className="active" key={index}><NavTerm term={term} onNavTermClick={onNavTermClick} index={index} /></li>);
+              return (<li className="active" key={index}><NavTerm term={term} onNavTermClick={onNavTermClick} index={index}
+                  onDelete={this.props.onDelete}
+               /></li>);
             } else {
-              return (<li key={index}><NavTerm term={term} onNavTermClick={onNavTermClick} index={index} /></li>);
+              return (<li key={index}><NavTerm term={term} onNavTermClick={onNavTermClick} index={index}
+                  onDelete={this.props.onDelete}
+               /></li>);
             }
         })}
-        <button type="button" className="btn btn-default btn-group-justified">New</button>
+        <button type="button" className="btn btn-default btn-group-justified"
+          onClick={this.props.onNew} >New</button>
       </ul>
       </div>
     );
