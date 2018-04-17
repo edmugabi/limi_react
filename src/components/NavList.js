@@ -7,6 +7,9 @@ export default class NavList extends Component {
     let terms = this.props.terms;
     const activeIndex = this.props.activeIndex;
     const onNavTermClick = this.props.onNavTermClick;
+    const onDelete = this.props.onDelete;
+    const addToCurrentTerm = this.props.addToCurrentTerm;
+
 
     console.log("activeIndex", activeIndex);
 
@@ -19,17 +22,20 @@ export default class NavList extends Component {
       <br />
       <ul className="nav nav-pills nav-stacked">
         {
-          terms.map((term, index) => {
-            if (index === activeIndex )  {
-              return (<li className="active" key={index}><NavTerm term={term} onNavTermClick={onNavTermClick} index={index}
-                  onDelete={this.props.onDelete}
+          Object.keys(terms).map(function(keyId, keyIndex) {
+            const term = terms[keyId];
+
+            if (keyId === activeIndex )  {
+              return (<li className="active" key={keyId}><NavTerm term={term} onNavTermClick={onNavTermClick}
+                index={keyId} onDelete={onDelete} addToCurrentTerm={addToCurrentTerm}
                /></li>);
             } else {
-              return (<li key={index}><NavTerm term={term} onNavTermClick={onNavTermClick} index={index}
-                  onDelete={this.props.onDelete}
+              return (<li key={keyId}><NavTerm term={term} onNavTermClick={onNavTermClick} index={keyId}
+                  onDelete={onDelete} addToCurrentTerm={addToCurrentTerm}
                /></li>);
             }
-        })}
+          })
+}
         <button type="button" className="btn btn-default btn-group-justified"
           onClick={this.props.onNew} >New</button>
       </ul>

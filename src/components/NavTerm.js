@@ -13,6 +13,7 @@ export default class NavTerm extends Component {
     const term = this.props.term;
     const index = this.props.index;
     const onDelete = this.props.onDelete;
+    const addToCurrentTerm = this.props.addToCurrentTerm;
 
     return (
       <a role="button" className="container-fluid">
@@ -21,7 +22,7 @@ export default class NavTerm extends Component {
           <div className="col-sm-8" >{term.name}</div>
           <div className="col-sm-8" >{term.description}</div>
           </div>
-          <NavTermControls onDelete={onDelete} index={index} />
+          <NavTermControls onDelete={onDelete} index={index} addToCurrentTerm={addToCurrentTerm} />
         </div>
       </a>
     );

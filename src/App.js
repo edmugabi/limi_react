@@ -4,45 +4,44 @@ import './App.css';
 import "bootstrap/dist/css/bootstrap.css";
 //import "bootswatch/journal/bootstrap.css";
 
+import {Chance} from 'chance';
+
 import TermDisplay from './components/TermDisplay.js';
 import Header from './components/Header.js';
 import NavList from './components/NavList.js';
+
+const chance = new Chance();
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    const terms = [
-      {
-        id: "59e4639b-70c8-4d12-a09c-9f123a2e3c99",
+    const terms = {
+      "59e4639b-70c8-4d12-a09c-9f123a2e3c99": {
         name: "Add",
         description: "The mathematical Add function",
-        expr: ["Add"],
+        expr: [],
         value: "Add"
       },
-      {
-        id: "07b1a4ad-9f5a-46c3-890c-0854b9456e98",
+      "07b1a4ad-9f5a-46c3-890c-0854b9456e98" : {
         name: "One",
         description: "The number 1",
-        expr: ["1"],
+        expr: [],
         value: "1"
       },
-      {
-        id: "9b82e6ab-8adf-4826-cae0-cef62c6eb76f",
+      "9b82e6ab-8adf-4826-cae0-cef62c6eb76f" : {
         name: "Two",
         description: "The number 2",
-        expr: ["2"],
+        expr: [],
         value: "2"
       },
-      {
-        id: "392afafc-fa10-401a-863a-237490e19838",
+      "392afafc-fa10-401a-863a-237490e19838" : {
         name: "Three",
         description: "The number three",
-        expr: ["3"],
+        expr: [],
         value: "3"
       },
-      {
-        id: "1207efa3-84b5-41cf-ac5b-c1cc7bb392c5",
+      "1207efa3-84b5-41cf-ac5b-c1cc7bb392c5" : {
         name: "One + Two",
         description: "One Added to Two",
         expr: [
@@ -52,12 +51,12 @@ class App extends Component {
         ],
         value: "4"
       },
-    ];
+    };
 
     this.state = {
-      activeIndex: 0,
-      nameText: terms[0].name,
-      descText: terms[0].description,
+      activeIndex: "59e4639b-70c8-4d12-a09c-9f123a2e3c99",
+      nameText: terms["59e4639b-70c8-4d12-a09c-9f123a2e3c99"].name,
+      descText: terms["59e4639b-70c8-4d12-a09c-9f123a2e3c99"].description,
       terms: terms
     };
 
@@ -67,13 +66,14 @@ class App extends Component {
     this.onSave = this.onSave.bind(this);
     this.onNew = this.onNew.bind(this);
     this.onDelete = this.onDelete.bind(this);
+    this.addToCurrentTerm = this.addToCurrentTerm.bind(this);
+    this.onRemoveExprTerm = this.onRemoveExprTerm.bind(this);
   }
 
 
   render() {
 
     const terms = this.state.terms;
-    const activeTerm = terms[this.state.activeIndex];
 
     return (
       <div>
@@ -82,13 +82,14 @@ class App extends Component {
         <div className="row">
         <div className="col-md-4 col-sm-4">
           <NavList terms={terms} activeIndex={this.state.activeIndex} onNavTermClick={this.onNavTermClick}
-          onNew={this.onNew} onDelete={this.onDelete}/>
+          onNew={this.onNew} onDelete={this.onDelete} addToCurrentTerm={this.addToCurrentTerm}/>
         </div>
         <div className="col-md-6 col-sm-6">
-          <TermDisplay terms={terms} activeTerm={activeTerm}
+          <TermDisplay terms={terms} activeIndex={this.state.activeIndex}
               onSave={this.onSave}
               updateName={this.updateName} updateDesc={this.updateDesc}
-              nameText={this.state.nameText} descText={this.state.descText} />
+              nameText={this.state.nameText} descText={this.state.descText}
+            onRemoveExprTerm = {this.onRemoveExprTerm} />
         </div>
         </div>
       </div>
@@ -96,23 +97,55 @@ class App extends Component {
     );
   }
 
-  onDelete(i) {
+  onRemoveExprTerm(id) {
     let terms = this.state.terms;
-    console.log("deleting index", i);
-    terms.splice(i, 1);
+    console.log("before remove", terms);
+    const activeIndex = this.state.activeIndex;
+    const idx = terms[activeIndex].expr.indexOf(id);
+    if (idx > -1) {
+      terms[activeIndex].expr.splice(idx, 1)
+    }
+    console.log("after remove", terms);
+    this.setState({
+      terms: terms
+    });
+  }
+
+  addToCurrentTerm(id) {
+    let terms = this.state.terms;
+    const activeIndex = this.state.activeIndex;
+    terms[activeIndex].expr.push(id);
+    this.setState({
+      terms: terms
+    });
+  }
+
+  onDelete(id) {
+    let terms = this.state.terms;
+    console.log("deleting index", id);
+    delete terms[id];
     this.setState({
       terms: terms
     })
   }
 
   onNew() {
-    this.onSave();
-    const activeIndex = this.state.terms.length;
-    console.log("New Active Index", activeIndex);
+    //this.onSave();
+
+    let terms = this.state.terms;
+    const id = chance.guid();
+    terms[id] = {
+      name: '',
+      description: '',
+      expr: [],
+      value: ''
+    };
+
     this.setState({
-      activeIndex: activeIndex,
+      activeIndex: id,
       nameText: '',
-      descText: ''
+      descText: '',
+      terms: terms
     });
   }
 
@@ -123,34 +156,25 @@ class App extends Component {
     const desc = this.state.descText;
 
     console.log(terms[activeIndex]);
-    if (terms[activeIndex] === undefined) {
-      terms[activeIndex] = {
-        id: "07b1a4ad-9f5a-46c3-890c-0854b9456e98",
-        name: name,
-        description: desc,
-        expr: [],
-        value: ''
-      };
-    }
-    else {
-      terms[activeIndex].name = name;
-      terms[activeIndex].description = desc;
-    }
+    terms[activeIndex].name = name;
+    terms[activeIndex].description = desc;
+
     this.setState({
       terms: terms
     });
   }
 
-  onNavTermClick(n) {
-    this.onSave()
+  onNavTermClick(id) {
+    //this.onSave()
     const terms = this.state.terms;
 
+
     this.setState({
-      activeIndex: n,
-      nameText: terms[n].name,
-      descText: terms[n].description
+      activeIndex: id,
+      nameText: terms[id].name,
+      descText: terms[id].description
     });
-    console.log("NavTerm Clicked, Index", n);
+    console.log("NavTerm Clicked, Index", id);
   }
 
   updateName(name){

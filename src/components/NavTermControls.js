@@ -7,6 +7,7 @@ export default class NavTermControls extends Component {
     super(props)
 
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleAddToCurrentTerm = this.handleAddToCurrentTerm.bind(this);
   }
 
   handleDelete(e, index) {
@@ -14,11 +15,15 @@ export default class NavTermControls extends Component {
     this.props.onDelete(index)
   }
 
+  handleAddToCurrentTerm(e, id) {
+    this.props.addToCurrentTerm(id);
+  }
+
   render() {
     const index = this.props.index;
     return (
       <div className="col-sm-4">
-        <span className="btn  glyphicon glyphicon-chevron-right pull-right"></span>
+        <span className="btn  glyphicon glyphicon-chevron-right pull-right" onClick={ (e) => this.handleAddToCurrentTerm(e, index)}></span>
         <span className="btn  glyphicon glyphicon-trash pull-right" onClick={(e) => this.handleDelete(e, index )} ></span>
       </div>
     );

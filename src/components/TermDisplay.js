@@ -20,9 +20,21 @@ class TermDisplay extends Component {
 
   render() {
    const terms = this.props.terms;
+   const activeIndex = this.props.activeIndex;
+   console.log("Active Id", activeIndex);
+   console.log("Terms", terms);
+   {/*Removing a currently selected Item causes a bug, because its id cannot be found after*/}
+   const expr = terms[activeIndex].expr;
+   
+   const expr_terms = expr.map(function(id) {
+     let term = terms[id];
+     term["id"] = id;
+     return term;
+   });
 
    const nameText = this.props.nameText;
    const descText = this.props.descText;
+   const onRemoveExprTerm = this.props.onRemoveExprTerm;
 
    console.log("nameText", nameText);
    console.log("descText", descText);
@@ -36,7 +48,7 @@ class TermDisplay extends Component {
        <input type="text" className="form-control" placeholder="Desc" value={descText}
             onChange={this.onDescChange} />
        <h5>Expr:</h5>
-       <ExprList terms={terms}/>
+       <ExprList expr_terms={expr_terms} onRemoveExprTerm={onRemoveExprTerm}/>
        <h5>Value:</h5>
        <div>3</div>
        <button type="button" className="btn btn-default pull-right"
